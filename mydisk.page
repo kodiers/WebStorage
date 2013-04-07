@@ -1,0 +1,46 @@
+<h1>Physical disks</h1>
+<form action=./disks.php?mydisk method=post>
+<table class="widetable">
+<tr>
+ 		<th>Disk name</th>
+		<th>Instance</th>
+		<th>Size</th>
+		<th>LUN HEX</th>
+		<th>LUN DEC</th>
+		<th>ZPOOL</th>
+		<th>Num path</th>
+		<th>Fc speed</th>
+		<th>Type</th>
+		<th>Label</th>
+		<th>Vendor</th>
+		<th>Product</th>
+		<th>Serial</th>
+		<th>Select</th>
+</tr>
+%%TABLE_DISKS_PARSEDISKS%%
+<tr>
+ <td><b><a href="disks.php?query=%%DISK_NAME%%">%%DISK_NAME%%</a></b></td>
+ <td>%%DISK_INSTANCE%%</td>
+ <td>%%DISK_SIZE%%</td>
+ <td>%%DISK_LUN_HEX%%</td>
+ <td>%%DISK_LUN_DEC%%</td>
+ <td><b><a href="disks.php?query=%%DISK_ZPOOL%%">%%DISK_ZPOOL%%</a></b></td>
+ <td>%%DISK_NUM_PATH%%</td>
+ <td>%%DISK_FC_SPEED%%</td>
+ <td>%%DISK_TYPE%%</td>
+ <td>%%DISK_LABEL%%</td>
+ <td>%%DISK_VENDOR%%</td>
+ <td>%%DISK_PRODUCT%%</td>
+ <td>%%DISK_SERIAL%%</td>
+ <td><input type=checkbox name=%%DISK_NAME%%></td>
+</tr>
+%%TABLE_DISKS_PARSEDISKS_END%%
+</table><br/>
+<input type=submit name="Add disk" value=add><br><br>					
+<input type=submit name="Remove disk" value=remove><br><br>			
+<input type=submit name="Edit disk" value=edit><br><br>"
+</form>
+<p style="margin:0 0 5px 0">
+ Detected <b>%%DISKS_DISKCOUNT%%</b>
+ physical disk(s), select a disk for formatting options.
+</p>
