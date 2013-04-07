@@ -31,7 +31,5 @@ else
  $content = content_handle('disks', 'mydisk');
 
 // serve page
-//$content = content_handle('disks', 'parse_dskinfo');
 page_handle($content);
-#include 'parse_dskinfo.php';
 ?>

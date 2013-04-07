@@ -9,7 +9,7 @@ function content_disks_mydisk()
  
  $dsk_full = 'sudo dskinfo list-parsable';			// define command variable( 'dskinfo list-parsable' in our case') need root rights to execute
  exec($dsk_full, $output, $ret);					// execute command( 'dskinfo' must be in '/usr/sbin' directory
- $diskcount = count($output);
+ $diskcount = count($output);						// get disk counts
  for($i = 0; $i < count($output); $i++)
  {
  	// Define variables
