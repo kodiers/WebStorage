@@ -5,5 +5,5 @@
 #		добавлены файлы mydisk.php и mydisk.page
 
 Установка 
-1. Скопировать файл disks.php  в корень установленной директории с ZFSguru
-2. Скопировать файлы mydisk.php и mydisk.page в директорию ./pages/disks/ вебинтерфейса ZFSguru
+1. Скопировать файл disks.php  в корень установленной директории 
+2. Скопировать файлы mydisk.php и mydisk.page в директорию ./pages/disks/ вебинтерфейса 
