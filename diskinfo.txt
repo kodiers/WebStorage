@@ -1,0 +1,11 @@
+disk                                   size hex   dec p   spd type  lb
+  use                      vendor           product          serial
+c7t0d0                                 585M -     -   -   -   disk  y
+  -                        NECVMWar         VMware IDE CDR10 -
+c8t0d0                                 50G  -     -   -   -   disk  y
+  rpool                    VMware,          VMware Virtual S 6000c290cbd78db6
+c8t1d0                                 16G  -     -   -   -   disk  y
+  -                        VMware,          VMware Virtual S 6000c29c3b752a2e
+c8t2d0                                 16G  -     -   -   -   disk  y
+  -                        VMware,          VMware Virtual S 6000c2910c785373
+                                                                               
