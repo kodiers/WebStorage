@@ -36,9 +36,19 @@
 </tr>
 %%TABLE_DISKS_PARSEDISKS_END%%
 </table><br/>
-<input type=submit name="Add disk" value=add><br><br>					
-<input type=submit name="Remove disk" value=remove><br><br>			
-<input type=submit name="Edit disk" value=edit><br><br>"
+<table>
+<tr>
+<td><input type=radio name=raid value=RAID0>RAID0</td>
+<td><input type=radio name=raid value=RAID1>RAID1</td>
+<td><input type=radio name=raid value=RAIDZ1>RAIDZ-1</td>
+<td><input type=radio name=raid value=RAIDZ2>RAIDZ-2</td>
+<td><input type=radio name=raid value=RAIDZ3>RAIDZ-3</td>
+</tr>
+<tr>
+<td><input type=submit name=add value="Add disk"></td>					
+<td><input type=submit name=remove value="Remove"></td>			
+<td><input type=submit name=edit value="Edit disk"></td>
+</tr>
 </form>
 <p style="margin:0 0 5px 0">
  Detected <b>%%DISKS_DISKCOUNT%%</b>

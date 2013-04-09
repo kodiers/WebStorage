@@ -58,6 +58,8 @@ function content_disks_mydisk()
   'TABLE_DISKS_PARSEDISKS'	=> $physdisks,
   'DISKS_DISKCOUNT'		=> $diskcount,
  );
+ // Handle form
+
  return $newtags;
 }
 ?>
