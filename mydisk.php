@@ -59,7 +59,10 @@ function content_disks_mydisk()
   'DISKS_DISKCOUNT'		=> $diskcount,
  );
  // Handle form
-
+ if ($_POST[$disk_name] !== null AND $_POST['add'] !== null) {
+ 	echo "Ouch!";
+ }
+ 
  return $newtags;
 }
 ?>
