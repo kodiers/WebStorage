@@ -45,7 +45,7 @@
 <td><input type=radio name=raid value=RAIDZ3>RAIDZ-3</td>
 </tr>
 <tr>
-<td><input type=submit name=add value="Add disk"></td>					
+<td>Pool name: <input type=text name=poolname value="zpool" size=12 maxlen=24><input type=submit name=add value="Add disk"></td>					
 <td><input type=submit name=remove value="Remove"></td>			
 <td><input type=submit name=edit value="Edit disk"></td>
 </tr>

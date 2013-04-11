@@ -7,6 +7,10 @@ function content_disks_mydisk()
  $physdisks = array();
  $output = array();								// define output array
  
+ $disk_names = array();							// define array for working with disk names in $_POST
+ $raid_type = NULL;								// define variable for raid type in $_POST 
+ $pool_create = NULL;							// define variable for create pool command
+  
  $dsk_full = 'sudo dskinfo list-parsable';			// define command variable( 'dskinfo list-parsable' in our case') need root rights to execute
  exec($dsk_full, $output, $ret);					// execute command( 'dskinfo' must be in '/usr/sbin' directory
  $diskcount = count($output);						// get disk counts
@@ -49,6 +53,7 @@ function content_disks_mydisk()
  			'DISK_PRODUCT'		=> $disk_product,
  			'DISK_SERIAL' => $disk_serial
  	);
+ 	array_push($disk_names, $disk_name);
  }
 
  // export new tags
@@ -59,10 +64,38 @@ function content_disks_mydisk()
   'DISKS_DISKCOUNT'		=> $diskcount,
  );
  // Handle form
- if ($_POST[$disk_name] !== null AND $_POST['add'] !== null) {
- 	echo "Ouch!";
- }
  
+ // check raid type
+ if(isset($_POST['raid'])) {
+ 	switch ($_POST['raid']) {
+ 		case "RAID0":
+ 			$raid_type = '';
+ 			break;
+ 		case "RAID1":
+ 			$raid_type = 'mirror';
+ 			break;
+ 		case "RAIDZ1":
+ 			$raid_type = 'raidz';
+ 			break;
+ 		case "RAIDZ2":
+ 			$raid_type = 'raidz2';
+ 			break;
+ 		case "RAIDZ3":
+ 			$raid_type = 'raidz3';
+ 			break;
+ 	}
+ }
+ $pool_create = "zpool create ".$_POST['poolname']." ".$raid_type." ";
+ // check members and forming command
+ foreach ($disk_names as $dname => $dname_val){
+ 	if (isset($_POST[$dname_val])) {
+ 		$pool_create = $pool_create.$dname_val." ";
+ 	}
+ }
+ // execute command
+ // TODO: thinck about check + work with execute
+ if(isset($_POST['raid']))
+ 	echo $pool_create;
  return $newtags;
 }
 ?>
