@@ -10,8 +10,8 @@ function content_disks_mydisk()
  $disk_names = array();							// define array for working with disk names in $_POST
  $raid_type = NULL;								// define variable for raid type in $_POST 
  $pool_create = NULL;							// define variable for create pool command
- $pool_ouput = array();
- $pool_retvar = NULL;
+ $pool_ouput = array();							// define variable for output create pool command
+ $pool_retvar = NULL;							// define  returned variable for create pool command
   
  $dsk_full = 'sudo dskinfo list-parsable';			// define command variable( 'dskinfo list-parsable' in our case') need root rights to execute
  exec($dsk_full, $output, $ret);					// execute command( 'dskinfo' must be in '/usr/sbin' directory
@@ -109,13 +109,11 @@ function content_disks_mydisk()
  			header("Location:./disks.php?poolcreatemessages=$querystr");
  		}
  		else {
+ 			// redirect to main page
  			$page = $_SERVER['PHP_SELF'];
  			$sec = 15;
  			header("Refresh: $sec; url=$page");
  		}
- 		//header("disks.php?mydisk");
- 		//if ($pool_ouput !== '')
- 		//	header("poolcreatemessages.php");
  }
  	
  return $newtags;
