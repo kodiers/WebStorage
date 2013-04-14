@@ -10,6 +10,8 @@ function content_disks_mydisk()
  $disk_names = array();							// define array for working with disk names in $_POST
  $raid_type = NULL;								// define variable for raid type in $_POST 
  $pool_create = NULL;							// define variable for create pool command
+ $pool_ouput = array();
+ $pool_retvar = NULL;
   
  $dsk_full = 'sudo dskinfo list-parsable';			// define command variable( 'dskinfo list-parsable' in our case') need root rights to execute
  exec($dsk_full, $output, $ret);					// execute command( 'dskinfo' must be in '/usr/sbin' directory
@@ -85,7 +87,7 @@ function content_disks_mydisk()
  			break;
  	}
  }
- $pool_create = "zpool create ".$_POST['poolname']." ".$raid_type." ";
+ $pool_create = "sudo zpool create ".$_POST['poolname']." ".$raid_type." ";
  // check members and forming command
  foreach ($disk_names as $dname => $dname_val){
  	if (isset($_POST[$dname_val])) {
@@ -94,8 +96,21 @@ function content_disks_mydisk()
  }
  // execute command
  // TODO: thinck about check + work with execute
- if(isset($_POST['raid']))
- 	echo $pool_create;
+ if(isset($_POST['raid'])) {
+ 		exec($pool_create, $pool_output, $pool_retvar);
+ 		if ($pool_retvar != 0){
+ 			header("Location:./disks.php?poolcreatemessages=$pool_ouput");
+ 		}
+ 		else {
+ 			$page = $_SERVER['PHP_SELF'];
+ 			$sec = 15;
+ 			header("Refresh: $sec; url=$page");
+ 		}
+ 		//header("disks.php?mydisk");
+ 		//if ($pool_ouput !== '')
+ 		//	header("poolcreatemessages.php");
+ }
+ 	
  return $newtags;
 }
 ?>
