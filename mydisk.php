@@ -98,6 +98,8 @@ function content_disks_mydisk()
  // TODO: thinck about check + work with execute
  if(isset($_POST['raid'])) {
  		exec($pool_create, $pool_output, $pool_retvar);
+ 		
+ 		//TODO: try to handle error when creating pool
  		if ($pool_retvar != 0){
  			$querystr = NULL;
  			for ($j = 0; $j < count($pool_ouput); $j++)
