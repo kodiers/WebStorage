@@ -99,7 +99,12 @@ function content_disks_mydisk()
  if(isset($_POST['raid'])) {
  		exec($pool_create, $pool_output, $pool_retvar);
  		if ($pool_retvar != 0){
- 			header("Location:./disks.php?poolcreatemessages=$pool_ouput");
+ 			$querystr = NULL;
+ 			for ($j = 0; $j < count($pool_ouput); $j++)
+ 			{
+ 				$querystr = $querystr.$pool_ouput[$j];
+ 			}
+ 			header("Location:./disks.php?poolcreatemessages=$querystr");
  		}
  		else {
  			$page = $_SERVER['PHP_SELF'];
