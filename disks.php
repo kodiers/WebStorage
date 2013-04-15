@@ -29,6 +29,8 @@ elseif (@isset($_GET['disks']))
  $content = content_handle('disks', 'disks');
 elseif (@isset($_GET['poolcreatemessages']))
  $content = content_handle('disks', 'poolcreatemessages');
+elseif (@isset($_GET['removepool']))
+ $content = content_handle('disks', 'removepool');
 else
  $content = content_handle('disks', 'mydisk');
 

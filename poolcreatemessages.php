@@ -1,13 +1,10 @@
 <?php
 	function content_disks_poolcreatemessages() {
-		if(isset($_GET['pool_output'])) {
-			for($i = 0; $i < count($pool_output); $i++){
-				$err[] = array(
-					'ERROR_STRING' => $pool_output[$i]);
-			}
+		if(isset($_GET['poolcreatemessages'])) {
+				$err = $_GET['poolcreatemessages'];
 		}
 		$newtags = array(
-				'TABLE_DISKS_ERROR' => $err);
+				'ERROR_STRING' => $err);
 		return $newtags;
 	}
 ?>

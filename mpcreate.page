@@ -1,0 +1,32 @@
+<h1>Create pool</h1>
+<form action=./pools.php?mpcreate method=post>
+<table class="widetable">
+<tr>
+ 		<th>Disk name</th>
+		<th>Instance</th>
+		<th>Size</th>
+		<th>ZPOOL</th>
+		<th>Select</th>
+</tr>
+%%TABLE_POOLS_PARSEDISKS%%
+<tr>
+ <td>%%DISK_NAME%%</td>
+ <td>%%DISK_INSTANCE%%</td>
+ <td>%%DISK_SIZE%%</td>
+ <td>%%DISK_ZPOOL%%</td>
+ <td><input type=checkbox name=%%DISK_NAME%%></td>
+</tr>
+%%TABLE_POOLS_PARSEDISKS_END%%
+</table><br/>
+<table>
+<tr>
+<td><input type=radio name=raid value=RAID0>RAID0</td>
+<td><input type=radio name=raid value=RAID1>RAID1</td>
+<td><input type=radio name=raid value=RAIDZ1>RAIDZ-1</td>
+<td><input type=radio name=raid value=RAIDZ2>RAIDZ-2</td>
+<td><input type=radio name=raid value=RAIDZ3>RAIDZ-3</td>
+</tr>
+<tr>
+<td>Pool name: <input type=text name=poolname value="zpool" size=12 maxlen=24><input type=submit name=add value="Add disk"></td>					
+</tr>
+</form>

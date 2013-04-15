@@ -1,8 +1,8 @@
 <h1>ERRORS</h1>
-
+<form action=./disks.php?mydisk method=get>
 <table class="widetable">
 <tr>
- 		<th>ERRROR</th>
+ 		<th>ERROR</th>
 </tr>
 %%TABLE_DISKS_ERROR%%
 <tr>
@@ -10,21 +10,5 @@
 </tr>
 %%TABLE_DISKS_PARSEDISKS_END%%
 </table><br/>
-<table>
-<tr>
-<td><input type=radio name=raid value=RAID0>RAID0</td>
-<td><input type=radio name=raid value=RAID1>RAID1</td>
-<td><input type=radio name=raid value=RAIDZ1>RAIDZ-1</td>
-<td><input type=radio name=raid value=RAIDZ2>RAIDZ-2</td>
-<td><input type=radio name=raid value=RAIDZ3>RAIDZ-3</td>
-</tr>
-<tr>
-<td>Pool name: <input type=text name=poolname value="zpool" size=12 maxlen=24><input type=submit name=add value="Add disk"></td>					
-<td><input type=submit name=remove value="Remove"></td>			
-<td><input type=submit name=edit value="Edit disk"></td>
-</tr>
+<input type=submit value=OK>			
 </form>
-<p style="margin:0 0 5px 0">
- Detected <b>%%DISKS_DISKCOUNT%%</b>
- physical disk(s), select a disk for formatting options.
-</p>

@@ -1,0 +1,18 @@
+<h1>ZPOOL FOR DELETE</h1>
+<form action=./disks.php?removepool method=post>
+<table class="widetable">
+<tr>
+		<th>ZPOOL</th>
+		<th>Select</th>
+</tr>
+%%TABLE_DISKS_ZPOOLS%%
+<tr>
+ <td><b><a href="disks.php?query=%%DISK_ZPOOL%%">%%DISK_ZPOOL%%</a></b></td>
+ <td><input type=checkbox name=%%DISK_ZPOOL%%></td>
+</tr>
+%%TABLE_DISKS_ZPOOLS_END%%
+</table><br/>
+<table>
+<td><input type=submit name=remove value="Remove"></td>			
+</tr>
+</form>

@@ -1,23 +1,6 @@
 <?php
 
-function redirect_refresh($str, $var){
-	if ($var != 0){
-		$querystr = $str;
-		//for ($j = 0; $j < count($pool_ouput); $j++)
-		//{
-		//	$querystr = $querystr.$pool_ouput[$j];
-			//}
-			header("Location:./disks.php?poolcreatemessages=$querystr");
-	}
-	else {
-		// redirect to main page
-		$page = $_SERVER['PHP_SELF'];
-		$sec = 1;
-		header("Refresh: $sec; url=$page");
-	}
-}
-
-function content_disks_mydisk()
+function content_pools_mpcreate()
 {
 
  // variables
@@ -32,7 +15,7 @@ function content_disks_mydisk()
   
  $dsk_full = 'sudo dskinfo list-parsable';			// define command variable( 'dskinfo list-parsable' in our case') need root rights to execute
  exec($dsk_full, $output, $ret);					// execute command( 'dskinfo' must be in '/usr/sbin' directory
- $diskcount = count($output);						// get disk counts
+
  for($i = 0; $i < count($output); $i++)
  {
  	// Define variables
@@ -77,14 +60,14 @@ function content_disks_mydisk()
 
  // export new tags
  $newtags = array(
-  'PAGE_ACTIVETAB'		=> 'DSK INFO',
-  'PAGE_TITLE'			=> 'DSK INFO',
-  'TABLE_DISKS_PARSEDISKS'	=> $physdisks,
+  'PAGE_ACTIVETAB'		=> 'My create',
+  'PAGE_TITLE'			=> 'CREATE POOL',
+  'TABLE_POOLS_PARSEDISKS'	=> $physdisks,
   'DISKS_DISKCOUNT'		=> $diskcount,
  );
  // Handle form
  if(isset($_POST['add'])){
- 	//echo "Add pressed!";
+ 	echo "Add pressed!";
  // check raid type
  	if(isset($_POST['raid'])) {
  		switch ($_POST['raid']) {
@@ -116,10 +99,9 @@ function content_disks_mydisk()
  	// TODO: thinck about check + work with execute
  	if(isset($_POST['raid'])) {
  			exec($pool_create, $pool_output, $pool_retvar);
- 			redirect_refresh("Error creating pool!", $pool_retvar);
  			// var_dump($pool_ouput);
  			//TODO: try to handle error when creating pool
- 			/*if ($pool_retvar != 0){
+ 			if ($pool_retvar != 0){
  				$querystr = "Error creating pool!";
  				//for ($j = 0; $j < count($pool_ouput); $j++)
  				//{
@@ -132,33 +114,90 @@ function content_disks_mydisk()
  				$page = $_SERVER['PHP_SELF'];
  				$sec = 1;
  				header("Refresh: $sec; url=$page");
- 			}*/
+ 			}
  	}
  		
  }
- if (isset($_POST['remove']))
- {
- 	//echo "Remove pressed!";
- 	// header("Location:./disks.php?removepool");
- 	$pool_remove = "sudo zpool destroy ".$_POST['rpoolname'];
- 	exec($pool_remove, $pool_ouput, $pool_retvar);
- 	redirect_refresh("Error removing pool!", $pool_retvar);
- 	/*if ($pool_retvar != 0){
- 		$querystr = "Error removing pool!";
- 		//for ($j = 0; $j < count($pool_ouput); $j++)
- 		//{
- 		//	$querystr = $querystr.$pool_ouput[$j];
- 			//}
- 			header("Location:./disks.php?poolcreatemessages=$querystr");
- 	}
- 	else {
- 		// redirect to main page
- 		$page = $_SERVER['PHP_SELF'];
- 		$sec = 1;
- 		header("Refresh: $sec; url=$page");
- 	}*/
- }
- 	
  return $newtags;
 }
+
+function submit_pools_createpool()
+{
+ // required libraries
+ activate_library('guru');
+ activate_library('zfs');
+
+ // POST variables
+ sanitize(@$_POST['new_zpool_name'], null, $new_zpool, 24);
+ $mountpoint = @$_POST['new_zpool_mountpoint'];
+ $sectorsize = @$_POST['new_zpool_sectorsize'];
+ $url = 'pools.php?mpcreate';
+ $url2 = 'pools.php?query='.$new_zpool;
+
+ // sanity
+ if ($new_zpool != @$_POST['new_zpool_name'])
+  friendlyerror('please use only alphanumerical characters for the pool name',
+   $url);
+ if (strlen($new_zpool) < 1)
+  friendlyerror('please enter a name for your new pool', $url);
+
+ // mountpoint
+ if ((strlen($mountpoint) > 1) AND ($mountpoint{0} == '/'))
+  $options_str = '-m '.$mountpoint.' ';
+ else
+ {
+  // use default mountpoint if not explicitly defined
+  $mountpoint = '/' . $new_zpool;
+  $options_str = '';
+ }
+
+ // filesystem version
+ $spa = (int)@$_POST['new_zpool_spa'];
+ $zpl = (int)@$_POST['new_zpool_zpl'];
+ $sys = guru_zfsversion();
+ if (($spa > 0) AND ($spa <= $sys['spa']))
+  $options_str .= '-o version='.$spa.' ';
+ if (($zpl > 0) AND ($zpl <= $sys['zpl']))
+  $options_str .= '-O version='.$zpl.' ';
+ $options_str .= '-O atime=off ';
+
+ // extract and format submitted disks to add
+ if (is_numeric($sectorsize))
+  $vdev = zfs_extractsubmittedvdevs($url, true);
+ else
+  $vdev = zfs_extractsubmittedvdevs($url, false);
+ $redundancy = zfs_extractsubmittedredundancy($_POST['new_zpool_redundancy'],
+  $vdev['member_count'], $url);
+
+ // check for member disks
+ if ($vdev['member_count'] < 1)
+  error('vdev member count zero');
+
+ // warn for RAID0 with more than 1 disk (could be a mistake)
+ if (($vdev['member_count'] > 1) AND ($redundancy == ''))
+  page_feedback('you selected RAID0 with more than one disk; are you sure '
+   .'that is what you wanted?', 'a_warning');
+
+ // array with commands to execute
+ $commands = array();
+
+ // handle sector size overrides
+ // we do this by creating GNOP providers which override the sector size
+ // this will force ashift to be different (inspect using zdb)
+ // this also works across reboots, and the .nop providers are only needed once
+ if (is_numeric($sectorsize))
+  if (is_array($vdev['member_disks']))
+   foreach ($vdev['member_disks'] as $vdevdisk)
+    $commands[] = '/sbin/gnop create -S '.(int)$sectorsize.' /dev/'.$vdevdisk;
+
+ // TODO: SECURITY
+ // assemble zpool create command
+ $commands[] = '/sbin/zpool create '.$options_str.$new_zpool.' '.$redundancy.' '
+  .$vdev['member_str'];
+ $commands[] = '/usr/sbin/chown -R nfs:nfs '.$mountpoint;
+
+ // defer to dangerouscommand function
+ dangerouscommand($commands, $url2);
+}
+
 ?>
