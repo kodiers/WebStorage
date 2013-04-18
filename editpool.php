@@ -1,13 +1,8 @@
 <?php
-//------------------------------------------
-// This file need for alternative delete pool
-// And for multiple choises
-//------------------------------------------
-
 
 require_once 'functions.php';
 
-function content_disks_removepool(){
+function content_disks_editpool(){
 	// variables
 	$physdisks = array();
 	$output = array();								// define output array
@@ -58,10 +53,10 @@ function content_disks_removepool(){
 	}
 	
 	// forming command
-	if (isset($_POST['remove']))
+	if (isset($_POST['edit']))
 	{
-		// remove pool
-		foreach ($uniq_vdisk as $disk => $vdisk){
+		// edit pool
+		/*foreach ($uniq_vdisk as $disk => $vdisk){
 			if(isset($_POST[$vdisk])){
 				$pool_remove = "sudo zpool destroy ".$vdisk;
 				exec($pool_remove, $pool_ouput, $pool_retvar);
@@ -71,7 +66,7 @@ function content_disks_removepool(){
 				}
 				redirect_refresh(NULL, 0);
 			}
-		}
+		}*/
 	}
 
 	// export new tags

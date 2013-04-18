@@ -1,21 +1,5 @@
 <?php
-
-function redirect_refresh($str, $var){
-	if ($var != 0){
-		$querystr = $str;
-		//for ($j = 0; $j < count($pool_ouput); $j++)
-		//{
-		//	$querystr = $querystr.$pool_ouput[$j];
-			//}
-			header("Location:./disks.php?poolcreatemessages=$querystr");
-	}
-	else {
-		// redirect to main page
-		$page = $_SERVER['PHP_SELF'];
-		$sec = 1;
-		header("Refresh: $sec; url=$page");
-	}
-}
+require_once 'functions.php';
 
 function content_disks_mydisk()
 {
@@ -84,7 +68,6 @@ function content_disks_mydisk()
  );
  // Handle form
  if(isset($_POST['add'])){
- 	//echo "Add pressed!";
  // check raid type
  	if(isset($_POST['raid'])) {
  		switch ($_POST['raid']) {
@@ -116,47 +99,24 @@ function content_disks_mydisk()
  	// TODO: thinck about check + work with execute
  	if(isset($_POST['raid'])) {
  			exec($pool_create, $pool_output, $pool_retvar);
- 			redirect_refresh("Error creating pool!", $pool_retvar);
- 			// var_dump($pool_ouput);
- 			//TODO: try to handle error when creating pool
- 			/*if ($pool_retvar != 0){
- 				$querystr = "Error creating pool!";
- 				//for ($j = 0; $j < count($pool_ouput); $j++)
- 				//{
- 				//	$querystr = $querystr.$pool_ouput[$j];
- 				//}
- 				header("Location:./disks.php?poolcreatemessages=$querystr");
- 			}
- 			else {
- 			// redirect to main page
- 				$page = $_SERVER['PHP_SELF'];
- 				$sec = 1;
- 				header("Refresh: $sec; url=$page");
- 			}*/
+ 			redirect_refresh("Error creating pool!", $pool_retvar); // redirect to error page
  	}
  		
  }
  if (isset($_POST['remove']))
  {
- 	//echo "Remove pressed!";
- 	// header("Location:./disks.php?removepool");
+	// remove pool
  	$pool_remove = "sudo zpool destroy ".$_POST['rpoolname'];
  	exec($pool_remove, $pool_ouput, $pool_retvar);
- 	redirect_refresh("Error removing pool!", $pool_retvar);
- 	/*if ($pool_retvar != 0){
- 		$querystr = "Error removing pool!";
- 		//for ($j = 0; $j < count($pool_ouput); $j++)
- 		//{
- 		//	$querystr = $querystr.$pool_ouput[$j];
- 			//}
- 			header("Location:./disks.php?poolcreatemessages=$querystr");
- 	}
- 	else {
- 		// redirect to main page
- 		$page = $_SERVER['PHP_SELF'];
- 		$sec = 1;
- 		header("Refresh: $sec; url=$page");
- 	}*/
+ 	redirect_refresh("Error removing pool!", $pool_retvar); // redirect to error page
+ }
+ if (isset($_POST['select']))
+ {
+ 	header("Location:./disks.php?removepool");
+ }
+ if(isset($_POST['edit']))
+ {
+ 	header("Location:./disks.php?editpool");
  }
  	
  return $newtags;

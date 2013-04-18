@@ -45,9 +45,19 @@
 <td><input type=radio name=raid value=RAIDZ3>RAIDZ-3</td>
 </tr>
 <tr>
-<td>Pool name: <input type=text name=poolname value="zpool" size=12 maxlen=24><input type=submit name=add value="Add disk"></td>					
-<td>Enter pool name for remove: <input type=text name=rpoolname value="zpool" size=12 maxlen=24><input type=submit name=remove value="Remove"></td>			
-<td><input type=submit name=edit value="Edit disk"></td>
+<td>Pool name: <input type=text name=poolname value="zpool" size=12 maxlen=24><input type=submit name=add value="Add disk"></td>
+</tr>
+<tr>					
+<td>
+Enter pool name for remove: <input type=text name=rpoolname value="zpool" size=12 maxlen=24><input type=submit name=remove value="Remove">
+<br>
+OR
+<br>
+Press to select pool for removing <input type=submit name=select value="Select">
+</td>
+</tr>
+<tr>			
+<td>For edit pool press <input type=submit name=edit value="Edit disk"></td>
 </tr>
 </form>
 <p style="margin:0 0 5px 0">
