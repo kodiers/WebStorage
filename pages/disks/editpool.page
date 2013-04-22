@@ -15,4 +15,5 @@
 <table>
 <td><input type=submit name=edit value="edit"></td>			
 </tr>
+</table>
 </form>

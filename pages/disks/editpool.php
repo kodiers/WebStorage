@@ -55,18 +55,8 @@ function content_disks_editpool(){
 	// forming command
 	if (isset($_POST['edit']))
 	{
-		// edit pool
-		/*foreach ($uniq_vdisk as $disk => $vdisk){
-			if(isset($_POST[$vdisk])){
-				$pool_remove = "sudo zpool destroy ".$vdisk;
-				exec($pool_remove, $pool_ouput, $pool_retvar);
-				if($pool_retvar != 0) {
-					redirect_refresh("Error removing pool!", $pool_retvar); // redirect to error page
-					break;
-				}
-				redirect_refresh(NULL, 0);
-			}
-		}*/
+		$pool_for_edit = $_POST['zpool'];
+		header("Location:./disks.php?editselectedpool=$pool_for_edit");
 	}
 
 	// export new tags

@@ -33,6 +33,8 @@ elseif (@isset($_GET['removepool']))
  $content = content_handle('disks', 'removepool');
 elseif (@isset($_GET['editpool']))
  $content = content_handle('disks', 'editpool');
+elseif (@isset($_GET['editselectedpool']))
+ $content = content_handle('disks', 'editselectedpool');
 else
  $content = content_handle('disks', 'mydisk');
 
