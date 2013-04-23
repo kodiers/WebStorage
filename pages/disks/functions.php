@@ -15,4 +15,6 @@ function redirect_refresh($str, $var){
 		header("Refresh: $sec; url=$page");
 	}
 }
+
+
 ?>

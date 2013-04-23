@@ -2,22 +2,25 @@
  
 require_once 'functions.php';
 
-function content_disks_editselectedpool(){
+function content_disks_editselectedpool()
+{
 	// variables
 	$physpools = array();							// define pool arra
-	$physdisks = array();							//define disk array
+	$physdisksmembers = array();							//define disk array for members disks
+	$physdisksfree = array();						// define disk array for free disks
 	$output = array();								// define output array
-
 	$disk_zpools = array();							// define array for working with disk names in $_POST
 	$raid_type = NULL;								// define variable for raid type in $_POST
 	$pool_create = NULL;							// define variable for create pool command
 	$pool_ouput = array();							// define variable for output create pool command
 	$pool_retvar = NULL;							// define  returned variable for create pool command
+	$pool_red = NULL;
+	$disks_remove = array();
 	
 	$pool_edit = NULL;
 	
-	if ($_GET['editselectedpool']) {
-		//var_dump($_GET['editselectedpool']);
+	if ($_GET['editselectedpool']) 
+	{
 		$pool_edit = $_GET['editselectedpool'];
 	}
 
@@ -46,13 +49,12 @@ function content_disks_editselectedpool(){
 		{
 			list($disk_name, $disk_instance, $disk_size, $disk_lunhex, $disk_lundec, $disk_zpool, $disk_numpath, $disk_fcspeed, $disk_type,		// parsing every string in $output array and place every part in corresponding variable
 				$disk_label, $disk_vendor, $disk_product, $disk_serial) = explode(":", $tmp_str);
-			$physdisks[] = array(
-					'DISK_NAME'			=> $disk_name,
+			$physdisksmembers[] = array(
+					'DISK_MEMBER'			=> $disk_name,
 					'DISK_INSTANCE'		=> $disk_instance,
 					'DISK_SIZE'		=> $disk_size,
 					'DISK_LUN_HEX'		=> $disk_lunhex,
 					'DISK_LUN_DEC'		=> $disk_lundec,
-					'DISK_ZPOOL'		=> $disk_zpool,
 					'DISK_NUM_PATH'		=> $disk_numpath,
 					'DISK_FC_SPEED'		=> $disk_fcspeed,
 					'DISK_TYPE'		=> $disk_type,
@@ -61,17 +63,95 @@ function content_disks_editselectedpool(){
 					'DISK_PRODUCT'		=> $disk_product,
 					'DISK_SERIAL' => $disk_serial
 			);
+			array_push($disks_remove, $disk_name);
+		}
+		else 
+		{
+			list($disk_name, $disk_instance, $disk_size, $disk_lunhex, $disk_lundec, $disk_zpool, $disk_numpath, $disk_fcspeed, $disk_type,		// parsing every string in $output array and place every part in corresponding variable
+					$disk_label, $disk_vendor, $disk_product, $disk_serial) = explode(":", $tmp_str);
+			// show disks not in pool
+			if ($disk_zpool === '-') 
+			{
+				$physdisksfree[] = array(
+					'DISK_FREE'			=> $disk_name,
+					'DISK_INSTANCE'		=> $disk_instance,
+					'DISK_SIZE'		=> $disk_size,
+					'DISK_LUN_HEX'		=> $disk_lunhex,
+					'DISK_LUN_DEC'		=> $disk_lundec,
+					'DISK_NUM_PATH'		=> $disk_numpath,
+					'DISK_FC_SPEED'		=> $disk_fcspeed,
+					'DISK_TYPE'		=> $disk_type,
+					'DISK_LABEL'		=> $disk_label,
+					'DISK_VENDOR'		=> $disk_vendor,
+					'DISK_PRODUCT'		=> $disk_product,
+					'DISK_SERIAL' => $disk_serial
+				);
+			}
 		}
 	}
-		$physpools[] = array(
-				'DISK_ZPOOL'	=> $pool_edit
-		);
-
+		
+	// required libraries
+ 	activate_library('zfs');
+ 	
+ 	// show pool redundancy
+ 	
+ 	$zpool_status = `sudo zpool status $pool_edit`;
+ 	if (strpos($zpool_status,'raidz3') !== false)
+ 	{
+ 		$redundancy = 'RAID7 (triple parity)';
+ 		$pool_red = 'raidz3';
+ 	}
+ 	elseif (strpos($zpool_status,'raidz2') !== false)
+ 	{
+ 		$redundancy = 'RAID6 (double parity)';
+ 		$pool_red = 'raidz2';
+ 	}
+ 	elseif (strpos($zpool_status,'raidz1') !== false)
+ 	{
+ 		$redundancy = 'RAID5 (single parity)';
+ 		$pool_red = 'raidz';
+ 	}
+ 	elseif (strpos($zpool_status,'mirror') !== false)
+ 	{
+ 		$redundancy = 'RAID1 (mirroring)';
+ 		$pool_red = 'mirror';
+ 	}
+ 	else
+ 	{
+ 		$redundancy = 'RAID0 (no redundancy)';
+ 	}
+	
+ 	// form pool array
+ 	
+	$physpools[] = array(
+		'DISK_ZPOOL'	=> $pool_edit,
+		'POOL_REDUNDANCY' => $redundancy
+	);
+	
+	// try to remove disk
+	//TODO: don't work now error: cannot remove c8t2d0: operation not supported on this type of pool
+	//TODO: need to fix
+	if(isset($_GET['r_disk']))
+	{
+		foreach($disks_remove as $rd => $rdv)
+		{
+			if(isset($_GET[$rdv]))
+			{
+				$command_rem_disk = 'sudo zpool remove '.$pool_edit.' '.$rdv;
+				var_dump($command_rem_disk);
+				exec($command_rem_disk, $pool_output, $pool_retvar);
+				redirect_refresh("Error deleting disk!", $pool_retvar); // redirect to error page
+			}
+		}
+		
+	}
+	
 
 	// export new tags
 	$newtags = array(
-			'TABLE_DISKS_ZPOOLS'	=> $physpools,
-			'TABLE_DISKS_PARSEDISKS' => $physdisks
+		'TABLE_DISKS_ZPOOLS'	=> $physpools,
+		'TABLE_DISKS_MEMBERSDISKS' => $physdisksmembers,
+		'TABLE_DISKS_FREEDISKS' => $physdisksfree
 	);
 	return $newtags;
 }
