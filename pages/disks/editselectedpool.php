@@ -16,6 +16,7 @@ function content_disks_editselectedpool()
 	$pool_retvar = NULL;							// define  returned variable for create pool command
 	$pool_red = NULL;
 	$disks_remove = array();
+	$disks_add = array();
 	
 	$pool_edit = NULL;
 	
@@ -86,6 +87,7 @@ function content_disks_editselectedpool()
 					'DISK_PRODUCT'		=> $disk_product,
 					'DISK_SERIAL' => $disk_serial
 				);
+				array_push($disks_add, $disk_name);
 			}
 		}
 	}
@@ -137,13 +139,32 @@ function content_disks_editselectedpool()
 		{
 			if(isset($_GET[$rdv]))
 			{
-				$command_rem_disk = 'sudo zpool remove '.$pool_edit.' '.$rdv;
-				var_dump($command_rem_disk);
-				exec($command_rem_disk, $pool_output, $pool_retvar);
-				redirect_refresh("Error deleting disk!", $pool_retvar); // redirect to error page
+				if($pool_red === 'mirror') 
+				{
+					$command_rem_disk = 'sudo zpool detach '.$pool_edit.' '.$rdv;
+					//var_dump($command_rem_disk);
+					exec($command_rem_disk, $pool_output, $pool_retvar);
+					redirect_refresh("Error removing disk from pool!", $pool_retvar); // redirect to error page
+				}
 			}
 		}
 		
+	}
+	
+	if(isset($_GET['a_disk']))
+	{
+		foreach ($disks_add as $ad => $adv)
+		{
+			if(isset($_GET['$adv']))
+			{
+				if($pool_red === 'mirror')
+				{
+					$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror '.$adv;
+					exec($command_rem_disk, $pool_output, $pool_retvar);
+					redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+				}
+			}
+		}
 	}
 	
 
