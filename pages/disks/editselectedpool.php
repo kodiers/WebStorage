@@ -139,7 +139,28 @@ function content_disks_editselectedpool()
 		{
 			if(isset($_GET[$rdv]))
 			{
-				if($pool_red === 'mirror') 
+				if($pool_red === 'mirror')		// TODO:fix cannot remove more than 1 disk from pool 
+				{
+					$command_rem_disk = 'sudo zpool detach '.$pool_edit.' '.$rdv;
+					//var_dump($command_rem_disk);
+					exec($command_rem_disk, $pool_output, $pool_retvar);
+					redirect_refresh("Error removing disk from pool!", $pool_retvar); // redirect to error page
+				}
+				else if ($pool_red === 'raidz')
+				{
+					$command_rem_disk = 'sudo zpool detach '.$pool_edit.' '.$rdv;
+					//var_dump($command_rem_disk);
+					exec($command_rem_disk, $pool_output, $pool_retvar);
+					redirect_refresh("Error removing disk from pool!", $pool_retvar); // redirect to error page
+				}
+				else if ($pool_red === 'raidz2')
+				{
+					$command_rem_disk = 'sudo zpool detach '.$pool_edit.' '.$rdv;
+					//var_dump($command_rem_disk);
+					exec($command_rem_disk, $pool_output, $pool_retvar);
+					redirect_refresh("Error removing disk from pool!", $pool_retvar); // redirect to error page
+				}
+				else if ($pool_red === 'raidz3')
 				{
 					$command_rem_disk = 'sudo zpool detach '.$pool_edit.' '.$rdv;
 					//var_dump($command_rem_disk);
@@ -148,25 +169,54 @@ function content_disks_editselectedpool()
 				}
 			}
 		}
-		
 	}
 	
 	if(isset($_GET['a_disk']))
 	{
-		foreach ($disks_add as $ad => $adv)
-		{
-			if(isset($_GET['$adv']))
+		//Add disks to mirrored pool
+		if($pool_red === 'mirror')
+		{	
+			$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror';
+			foreach ($disks_add as $ad => $adv) 
 			{
-				if($pool_red === 'mirror')
+				if(isset($_GET[$adv]))
 				{
-					$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror '.$adv;
-					exec($command_rem_disk, $pool_output, $pool_retvar);
-					redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+					$command_add_disk = $command_add_disk.' '.$adv;
+				}
+			}
+			exec($command_add_disk, $pool_output, $pool_retvar);
+			redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+		}
+		//TODO: add disk to another type of pool
+		else
+		{
+			foreach ($disks_add as $ad => $adv)
+			{
+				if(isset($_GET['$adv']))
+				{
+					if($pool_red === 'raidz')
+					{
+						$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror '.$adv;
+						exec($command_rem_disk, $pool_output, $pool_retvar);
+						redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+					}
+					else if($pool_red === 'raidz2')
+					{
+						$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror '.$adv;
+						exec($command_rem_disk, $pool_output, $pool_retvar);
+						redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+					}
+					else if($pool_red === 'raidz3')
+					{
+						$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror '.$adv;
+						exec($command_rem_disk, $pool_output, $pool_retvar);
+						redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+					}
 				}
 			}
 		}
 	}
-	
+
 
 	// export new tags
 	$newtags = array(
