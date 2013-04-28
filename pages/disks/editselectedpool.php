@@ -177,22 +177,31 @@ function content_disks_editselectedpool()
 		if($pool_red === 'mirror')
 		{	
 			$command_add_disk = 'sudo zpool add '.$pool_edit.' mirror';
+			$dcount = 0;
 			foreach ($disks_add as $ad => $adv) 
 			{
 				if(isset($_GET[$adv]))
 				{
 					$command_add_disk = $command_add_disk.' '.$adv;
+					$dcount++;
 				}
 			}
-			exec($command_add_disk, $pool_output, $pool_retvar);
-			redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+			if($dcount % 2 == 0)
+			{
+				exec($command_add_disk, $pool_output, $pool_retvar);
+				redirect_refresh("Error attaching disk to pool!", $pool_retvar); // redirect to error page
+			}
+			else
+			{
+				redirect_refresh("Disk count should be even!", 1); // redirect to error page
+			}
 		}
 		//TODO: add disk to another type of pool
 		else
 		{
 			foreach ($disks_add as $ad => $adv)
 			{
-				if(isset($_GET['$adv']))
+				if(isset($_GET[$adv]))
 				{
 					if($pool_red === 'raidz')
 					{
